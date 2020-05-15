@@ -20,28 +20,27 @@
  */
 
 #ifndef lint
-static const char rcsid[] =
-    "@(#) $Header: machdep.c,v 1.4 97/09/30 15:03:53 leres Exp $ (LBL)";
+static const char rcsid[] = "@(#) $Header: machdep.c,v 1.4 97/09/30 15:03:53 leres Exp $ (LBL)";
 #endif
 
 #include <sys/types.h>
 #ifdef __osf__
-#include <sys/sysinfo.h>
-#include <sys/proc.h>
+   #include <sys/proc.h>
+   #include <sys/sysinfo.h>
 #endif
 
 #include "machdep.h"
 
-int
-abort_on_misalignment(char *ebuf)
+int abort_on_misalignment(char *ebuf)
 {
 #ifdef __osf__
-	static int buf[2] = { SSIN_UACPROC, UAC_SIGBUS };
+   static int buf[2] = {SSIN_UACPROC, UAC_SIGBUS};
 
-	if (setsysinfo(SSI_NVPAIRS, (caddr_t)buf, 1, 0, 0) < 0) {
-		(void)sprintf(ebuf, "setsysinfo: errno %d", errno);
-		return (-1);
-	}
+   if(setsysinfo(SSI_NVPAIRS, (caddr_t)buf, 1, 0, 0) < 0)
+   {
+      (void)sprintf(ebuf, "setsysinfo: errno %d", errno);
+      return (-1);
+   }
 #endif
-	return (0);
+   return (0);
 }

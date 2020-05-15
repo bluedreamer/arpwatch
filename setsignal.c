@@ -20,23 +20,22 @@
  */
 
 #ifndef lint
-static const char rcsid[] =
-    "@(#) $Header: setsignal.c,v 1.4 97/06/15 13:20:29 leres Exp $ (LBL)";
+static const char rcsid[] = "@(#) $Header: setsignal.c,v 1.4 97/06/15 13:20:29 leres Exp $ (LBL)";
 #endif
 
 #include <sys/types.h>
 
 #ifdef HAVE_MEMORY_H
-#include <memory.h>
+   #include <memory.h>
 #endif
 #include <signal.h>
 #ifdef HAVE_SIGACTION
-#include <string.h>
+   #include <string.h>
 #endif
 
 #include "gnuc.h"
 #ifdef HAVE_OS_PROTO_H
-#include "os-proto.h"
+   #include "os-proto.h"
 #endif
 
 #include "setsignal.h"
@@ -52,27 +51,25 @@ static const char rcsid[] =
  *
  * Did I mention that signals suck?
  */
-RETSIGTYPE
-(*setsignal (int sig, RETSIGTYPE (*func)(int)))(int)
+RETSIGTYPE (*setsignal(int sig, RETSIGTYPE (*func)(int)))(int)
 {
 #ifdef HAVE_SIGACTION
-	struct sigaction old, new;
+   struct sigaction old, new;
 
-	memset(&new, 0, sizeof(new));
-	new.sa_handler = func;
-#ifdef SA_RESTART
-	new.sa_flags |= SA_RESTART;
-#endif
-	if (sigaction(sig, &new, &old) < 0)
-		return (SIG_ERR);
-	return (old.sa_handler);
+   memset(&new, 0, sizeof(new));
+   new.sa_handler = func;
+   #ifdef SA_RESTART
+   new.sa_flags |= SA_RESTART;
+   #endif
+   if(sigaction(sig, &new, &old) < 0)
+      return (SIG_ERR);
+   return (old.sa_handler);
 
 #else
-#ifdef HAVE_SIGSET
-	return (sigset(sig, func));
-#else
-	return (signal(sig, func));
-#endif
+   #ifdef HAVE_SIGSET
+   return (sigset(sig, func));
+   #else
+   return (signal(sig, func));
+   #endif
 #endif
 }
-
