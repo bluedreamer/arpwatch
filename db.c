@@ -131,11 +131,12 @@ ent_add(register u_int32_t a, register u_char *e, time_t t, register char *h)
 			t2 = ap->elist[0]->t;
 			e2 = ap->elist[0]->e;
 			if (t - t2 < FLIPFLIP_DELTA &&
-			    (isdecnet(e) || isdecnet(e2)))
+			    (isdecnet(e) || isdecnet(e2))) {
 				dosyslog(LOG_INFO,
 				    "suppressed DECnet flip flop", a, e, e2);
-			else
+			} else {
 				report("flip flop", a, e, e2, &t, &t2);
+}
 			ap->elist[1] = ap->elist[0];
 			ap->elist[0] = ep;
 			ep->t = t;
@@ -188,8 +189,9 @@ ainfo_find(register u_int32_t a)
 			ap->a = a;
 			break;
 		}
-		if (a == ap->a)
+		if (a == ap->a) {
 			break;
+}
 
 		if (ap->next != NULL) {
 			/* Try linked cell */
@@ -223,13 +225,15 @@ ent_loop(ent_process fn)
 	register struct einfo *ep;
 
 	n = 0;
-	for (i = 0; i < HASHSIZE; ++i)
-		for (ap = &ainfo_table[i]; ap != NULL; ap = ap->next)
+	for (i = 0; i < HASHSIZE; ++i) {
+		for (ap = &ainfo_table[i]; ap != NULL; ap = ap->next) {
 			for (j = 0; j < ap->ecount; ++j) {
 				ep = ap->elist[j];
 				(*fn)(ap->a, ep->e, ep->t, ep->h);
 				++n;
 			}
+}
+}
 	return (n);
 }
 
@@ -243,8 +247,9 @@ alist_alloc(register struct ainfo *ap)
 		syslog(LOG_ERR, "alist_alloc(): esize 0, can't happen");
 		exit(1);
 	}
-	if (ap->ecount < ap->esize)
+	if (ap->ecount < ap->esize) {
 		return;
+}
 	ap->esize += 2;
 	size = ap->esize * sizeof(ap->elist[0]);
 	ap->elist = (struct einfo **)realloc(ap->elist, size);
@@ -281,10 +286,12 @@ elist_alloc(register u_int32_t a, register u_char *e, register time_t t,
 	ep = elist++;
 	--eleft;
 	BCOPY(e, ep->e, 6);
-	if (h == NULL && !initializing)
+	if (h == NULL && !initializing) {
 		h = getsname(a);
-	if (h != NULL && !isdigit((int)*h))
+}
+	if (h != NULL && !isdigit((int)*h)) {
 		strcpy(ep->h, h);
+}
 	ep->t = t;
 	return (ep);
 }
@@ -297,8 +304,9 @@ check_hname(register struct ainfo *ap)
 	register char *h;
 
 	/* Don't waste time if we're loading the initial arp.dat */
-	if (initializing)
+	if (initializing) {
 		return;
+}
 	ep = ap->elist[0];
 	h = getsname(ap->a);
 	if (!isdigit((int)*h) && strcmp(h, ep->h) != 0) {
@@ -315,10 +323,12 @@ cmpeinfo(register const void *p1, register const void *p2)
 
 	t1 = (*(struct einfo **)p1)->t;
 	t2 = (*(struct einfo **)p2)->t;
-	if (t1 > t2)
+	if (t1 > t2) {
 		return (-1);
-	if (t1 < t2)
+}
+	if (t1 < t2) {
 		return (1);
+}
 	return (0);
 }
 
@@ -328,11 +338,14 @@ sorteinfo(void)
 	register int i;
 	register struct ainfo *ap;
 
-	for (i = 0; i < HASHSIZE; ++i)
-		for (ap = &ainfo_table[i]; ap != NULL; ap = ap->next)
-			if (ap->ecount > 0)
+	for (i = 0; i < HASHSIZE; ++i) {
+		for (ap = &ainfo_table[i]; ap != NULL; ap = ap->next) {
+			if (ap->ecount > 0) {
 				qsort(ap->elist, ap->ecount,
 				    sizeof(ap->elist[0]), cmpeinfo);
+}
+}
+}
 }
 
 struct ainfo *
@@ -368,10 +381,11 @@ debugdump(void)
 	register struct ainfo *ap;
 	register struct einfo *ep;
 
-	for (i = 0; i < HASHSIZE; ++i)
+	for (i = 0; i < HASHSIZE; ++i) {
 		for (ap = &ainfo_table[i]; ap != NULL; ap = ap->next) {
-			if (ap->esize == 0)
+			if (ap->esize == 0) {
 				continue;
+}
 			if (ap->ecount == 0) {
 				printf("%s\n", intoa(ap->a));
 				continue;
@@ -379,12 +393,14 @@ debugdump(void)
 			t = 0;
 			for (j = 0; j < ap->ecount; ++j) {
 				ep = ap->elist[j];
-				if (t != 0 && t < ep->t)
+				if (t != 0 && t < ep->t) {
 					printf("*");
+}
 				printf("%s\t%s\t%u\t%s\n", intoa(ap->a),
 				    e2str(ep->e), (u_int)ep->t, ep->h);
 				t = ep->t;
 			}
 		}
+}
 }
 #endif

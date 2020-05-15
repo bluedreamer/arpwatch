@@ -70,8 +70,9 @@ dosyslog(register int p, register char *s, register u_int32_t a,
 	char xbuf[64];
 
 	/* No report until we're initialized */
-	if (initializing)
+	if (initializing) {
 		return;
+}
 
 	/* Display both ethernet addresses if they don't match */
 	(void)strcpy(xbuf, e2str(ea));
@@ -81,10 +82,11 @@ dosyslog(register int p, register char *s, register u_int32_t a,
 		(void)strcat(xbuf, ")");
 	}
 
-	if (debug)
+	if (debug) {
 		fprintf(stderr, "%s: %s %s %s\n", prog, s, intoa(a), xbuf);
-	else
+	} else {
 		syslog(p, "%s %s %s", s, intoa(a), xbuf);
+}
 }
 
 static FILE *dumpf;
@@ -94,10 +96,12 @@ dumpone(register u_int32_t a, register u_char *e, register time_t t,
     register char *h)
 {
 	(void)fprintf(dumpf, "%s\t%s", e2str(e), intoa(a));
-	if (t != 0 || h != NULL)
+	if (t != 0 || h != NULL) {
 		(void)fprintf(dumpf, "\t%u", (u_int32_t)t);
-	if (h != NULL && *h != '\0')
+}
+	if (h != NULL && *h != '\0') {
 		(void)fprintf(dumpf, "\t%s", h);
+}
 	(void)putc('\n', dumpf);
 }
 

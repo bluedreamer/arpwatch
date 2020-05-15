@@ -57,8 +57,9 @@ strerror(num)
 	char tmp[40];
 
 	errnum = num;				/* convert to unsigned */
-	if (errnum < sys_nerr)
+	if (errnum < sys_nerr) {
 		return(sys_errlist[errnum]);
+}
 
 	/* Do this by hand, so we don't include stdio(3). */
 	t = tmp;
@@ -67,8 +68,9 @@ strerror(num)
 	} while (errnum /= 10);
 	for (p = ebuf + sizeof(UPREFIX) - 1;;) {
 		*p++ = *--t;
-		if (t <= tmp)
+		if (t <= tmp) {
 			break;
+}
 	}
 	*p = '\0';
 	return(ebuf);

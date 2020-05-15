@@ -79,10 +79,11 @@ main(int argc, char **argv)
 	register int op, i;
 	char errbuf[256];
 
-	if ((cp = strrchr(argv[0], '/')) != NULL)
+	if ((cp = strrchr(argv[0], '/')) != NULL) {
 		prog = cp + 1;
-	else
+	} else {
 		prog = argv[0];
+}
 
 	if (abort_on_misalignment(errbuf) < 0) {
 		(void)fprintf(stderr, "%s: %s\n", prog, errbuf);
@@ -90,7 +91,7 @@ main(int argc, char **argv)
 	}
 
 	opterr = 0;
-	while ((op = getopt(argc, argv, "df:")) != EOF)
+	while ((op = getopt(argc, argv, "df:")) != EOF) {
 		switch (op) {
 
 		case 'd':
@@ -108,17 +109,20 @@ main(int argc, char **argv)
 		default:
 			usage();
 		}
+}
 	
-	if (optind == argc)
+	if (optind == argc) {
 		usage();
+}
 
 	openlog(prog, 0, LOG_DAEMON);
 
 	/* Read in database */
 	initializing = 1;
 	/* XXX todo: file locking */
-	if (!readdata())
+	if (!readdata()) {
 		exit(1);
+}
 	sorteinfo();
 #ifdef DEBUG
 	if (debug > 2) {
@@ -129,10 +133,12 @@ main(int argc, char **argv)
 	initializing = 0;
 
 	/* Suck files in then exit */
-	for (i = optind; i < argc; ++i)
+	for (i = optind; i < argc; ++i) {
 		(void)readsnmp(argv[i]);
-	if (!dump())
+}
+	if (!dump()) {
 		exit(1);
+}
 	exit(0);
 }
 
@@ -163,8 +169,9 @@ readsnmp(register char *file)
 {
 	register FILE *f;
 
-	if (debug > 2)
+	if (debug > 2) {
 		(void)fprintf(stderr, "%s: reading %s\n", prog, file);
+}
 	if ((f = fopen(file, "r")) == NULL) {
 		syslog(LOG_ERR, "fopen(%s): %m", file);
 		return(0);

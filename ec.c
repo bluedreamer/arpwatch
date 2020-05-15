@@ -80,8 +80,9 @@ ec_a2o(register char *cp, register u_int32_t *op)
 	u_char e[6];
 
 	(void)sprintf(xbuf, "%.32s:0:0:0", cp);
-	if (!str2e(xbuf, e))
+	if (!str2e(xbuf, e)) {
 		return (0);
+}
 	*op = 0;
 	BCOPY(e, op, 3);
 	return (1);
@@ -120,9 +121,11 @@ ec_find(register u_char *e)
 
 	o = 0;
 	BCOPY(e, &o, 3);
-	for (i = 0; i < ec_last; ++i)
-		if (list[i].o == o)
+	for (i = 0; i < ec_last; ++i) {
+		if (list[i].o == o) {
 			return (list[i].text);
+}
+}
 
 	return (NULL);
 }
@@ -142,10 +145,12 @@ ec_loop(register FILE *f, ec_process fn, register const char *nm)
 		++n;
 		cp = line;
 		cp2 = cp + strlen(cp) - 1;
-		if (cp2 >= cp && *cp2 == '\n')
+		if (cp2 >= cp && *cp2 == '\n') {
 			*cp2++ = '\0';
-		if (*cp == '#')
+}
+		if (*cp == '#') {
 			continue;
+}
 		if ((cp2 = strchr(cp, '\t')) == 0) {
 			syslog(LOG_ERR, "ec_loop(): %s:%d missing tab", nm, n);
 			continue;
@@ -175,8 +180,9 @@ ec_loop(register FILE *f, ec_process fn, register const char *nm)
 		}
 		*cp2 = '\0';
 
-		if (!(*fn)(o, text))
+		if (!(*fn)(o, text)) {
 			return (0);
+}
 	}
 
 	return (1);
@@ -202,11 +208,13 @@ str2e(register char *str, register u_char *e)
 
 	MEMSET(n, 0, sizeof(n));
 	if (sscanf(str, "%x:%x:%x:%x:%x:%x",
-	    &n[0], &n[1], &n[2], &n[3], &n[4], &n[5]) != 6)
+	    &n[0], &n[1], &n[2], &n[3], &n[4], &n[5]) != 6) {
 		return (0);
+}
 	for (i = 0; i < 6; ++i) {
-		if (n[i] > 0xff)
+		if (n[i] > 0xff) {
 			return (0);
+}
 		e[i] = n[i];
 	}
 	return (1);

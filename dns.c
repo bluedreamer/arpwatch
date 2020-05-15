@@ -149,8 +149,9 @@ gethname(u_int32_t a)
 	_res.options &= ~(RES_DEFNAMES | RES_DNSRCH);
 	hp = gethostbyaddr((char *)&a, sizeof(a), AF_INET);
 	_res.options = options;
-	if (hp == NULL)
+	if (hp == NULL) {
 		return (intoa(a));
+}
 	return (hp->h_name);
 }
 
@@ -163,8 +164,9 @@ getsname(register u_int32_t a)
 	s = gethname(a);
 	if (!isdigit((int)*s)) {
 		cp = strchr(s, '.');
-		if (cp != NULL)
+		if (cp != NULL) {
 			*cp = '\0';
+}
 	}
 	return (s);
 }

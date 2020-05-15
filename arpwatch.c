@@ -154,12 +154,13 @@ main(int argc, char **argv)
 	struct bpf_program code;
 	char errbuf[PCAP_ERRBUF_SIZE];
 
-	if (argv[0] == NULL)
+	if (argv[0] == NULL) {
 		prog = "arpwatch";
-	else if ((cp = strrchr(argv[0], '/')) != NULL)
+	} else if ((cp = strrchr(argv[0], '/')) != NULL) {
 		prog = cp + 1;
-	else
+	} else {
 		prog = argv[0];
+}
 
 	if (abort_on_misalignment(errbuf) < 0) {
 		(void)fprintf(stderr, "%s: %s\n", prog, errbuf);
@@ -170,7 +171,7 @@ main(int argc, char **argv)
 	interface = NULL;
 	rfilename = NULL;
 	pd = NULL;
-	while ((op = getopt(argc, argv, "df:i:n:Nr:")) != EOF)
+	while ((op = getopt(argc, argv, "df:i:n:Nr:")) != EOF) {
 		switch (op) {
 
 		case 'd':
@@ -190,8 +191,9 @@ main(int argc, char **argv)
 			break;
 
 		case 'n':
-			if (!addnet(optarg))
+			if (!addnet(optarg)) {
 				usage();
+}
 			break;
 
 		case 'N':
@@ -205,9 +207,11 @@ main(int argc, char **argv)
 		default:
 			usage();
 		}
+}
 
-	if (optind != argc)
+	if (optind != argc) {
 		usage();
+}
 
 	if (rfilename != NULL) {
 		net = 0;
@@ -234,8 +238,9 @@ main(int argc, char **argv)
 			if (pid < 0) {
 				syslog(LOG_ERR, "main fork(): %m");
 				exit(1);
-			} else if (pid != 0)
+			} else if (pid != 0) {
 				exit(0);
+}
 			(void)close(fileno(stdin));
 			(void)close(fileno(stdout));
 			(void)close(fileno(stderr));
@@ -303,13 +308,15 @@ main(int argc, char **argv)
 		syslog(LOG_ERR, "pcap_setfilter: %s", pcap_geterr(pd));
 		exit(1);
 	}
-	if (rfilename == NULL)
+	if (rfilename == NULL) {
 		syslog(LOG_INFO, "listening on %s", interface);
+}
 
 	/* Read in database */
 	initializing = 1;
-	if (!readdata())
+	if (!readdata()) {
 		exit(1);
+}
 	sorteinfo();
 #ifdef DEBUG
 	if (debug > 2) {
@@ -347,8 +354,9 @@ main(int argc, char **argv)
 		exit(1);
 	}
 	pcap_close(pd);
-	if (!dump())
+	if (!dump()) {
 		exit(1);
+}
 	exit(0);
 }
 
@@ -366,8 +374,9 @@ process_ether(register u_char *u, register const struct pcap_pkthdr *h,
 	eh = (struct ether_header *)p;
 	ea = (struct ether_arp *)(eh + 1);
 
-	if (!sanity_ether(eh, ea, h->caplen))
+	if (!sanity_ether(eh, ea, h->caplen)) {
 		return;
+}
 
 	/* Source hardware ethernet address */
 	sea = (u_char *)ESRC(eh);
@@ -400,9 +409,10 @@ process_ether(register u_char *u, register const struct pcap_pkthdr *h,
 	/* Got a live one */
 	t = h->ts.tv_sec;
 	can_checkpoint = 0;
-	if (!ent_add(sia, sea, t, NULL))
+	if (!ent_add(sia, sea, t, NULL)) {
 		syslog(LOG_ERR, "ent_add(%s, %s, %ld) failed",
 		    intoa(sia), e2str(sea), t);
+}
 	can_checkpoint = 1;
 }
 
@@ -425,7 +435,7 @@ sanity_ether(register struct ether_header *eh, register struct ether_arp *ea,
 	ea->arp_op = ntohs(ea->arp_op);
 
 	if (len < sizeof(*eh) + sizeof(*ea)) {
-		syslog(LOG_ERR, "short (want %d)\n", sizeof(*eh) + sizeof(*ea));
+		syslog(LOG_ERR, "short (want %lu)\n", sizeof(*eh) + sizeof(*ea));
 		return(0);
 	}
 
@@ -465,9 +475,10 @@ sanity_ether(register struct ether_header *eh, register struct ether_arp *ea,
 			/* no useful information here */
 			return(0);
 		} else if (ea->arp_op != REVARP_REPLY) {
-			if (debug)
+			if (debug) {
 				syslog(LOG_ERR, "%s sent wrong revarp op %d\n",
 				    e2str(shost), ea->arp_op);
+}
 			return(0);
 		}
 	} else {
@@ -515,8 +526,9 @@ process_fddi(register u_char *u, register const struct pcap_pkthdr *h,
 		bit_reverse(fh->src, 6);
 		bit_reverse(fh->dst, 6);
 	}
-	if (!sanity_fddi(fh, ea, h->caplen))
+	if (!sanity_fddi(fh, ea, h->caplen)) {
 		return;
+}
 
 	/* Source MAC hardware ethernet address */
 	sea = (u_char *)fh->src;
@@ -549,9 +561,10 @@ process_fddi(register u_char *u, register const struct pcap_pkthdr *h,
 	/* Got a live one */
 	t = h->ts.tv_sec;
 	can_checkpoint = 0;
-	if (!ent_add(sia, sea, t, NULL))
+	if (!ent_add(sia, sea, t, NULL)) {
 		syslog(LOG_ERR, "ent_add(%s, %s, %ld) failed",
 		    intoa(sia), e2str(sea), t);
+}
 	can_checkpoint = 1;
 }
 
@@ -577,7 +590,7 @@ sanity_fddi(register struct fddi_header *fh, register struct ether_arp *ea,
 	op = ntohs(op);
 
 	if (len < sizeof(*fh) + sizeof(*ea)) {
-		syslog(LOG_ERR, "short (want %d)\n", sizeof(*fh) + sizeof(*ea));
+		syslog(LOG_ERR, "short (want %lu)\n", sizeof(*fh) + sizeof(*ea));
 		return(0);
 	}
 
@@ -620,9 +633,10 @@ sanity_fddi(register struct fddi_header *fh, register struct ether_arp *ea,
 			/* no useful information here */
 			return(0);
 		} else if (op != REVARP_REPLY) {
-			if (debug)
+			if (debug) {
 				syslog(LOG_ERR, "%s sent wrong revarp op %d\n",
 				    e2str(shost), op);
+}
 			return(0);
 		}
 	} else {
@@ -643,8 +657,9 @@ addnet(register const char *str)
 	char *cp2;
 	char tstr[64];
 
-	if (strlen(str) > sizeof(tstr) - 1)
+	if (strlen(str) > sizeof(tstr) - 1) {
 		return(0);
+}
 
 	if (nets_size <= 0) {
 		nets_size = 8;
@@ -668,34 +683,38 @@ addnet(register const char *str)
 		*cp++ = '\0';
 		width = strtol(cp, &cp2, 10);
 		/* Trailing garbage */
-		if (*cp2 != '\0')
+		if (*cp2 != '\0') {
 			    return (0);
-		if (width > 32)
+}
+		if (width > 32) {
 			    return (0);
+}
 	}
 
 	/* XXX hack */
 	n = ntohl(inet_addr(tstr));
 	while ((n & 0xff000000) == 0) {
 		n <<= 8;
-		if (n == 0)
+		if (n == 0) {
 			return (0);
+}
 	}
 	n = htonl(n);
 
 	if (width != 0) {
 		m = ~0;
 		m <<= 32 - width;
-	} else if (IN_CLASSA(n))
+	} else if (IN_CLASSA(n)) {
 		m = IN_CLASSA_NET;
-	else if (IN_CLASSB(n))
+	} else if (IN_CLASSB(n)) {
 		m = IN_CLASSB_NET;
-	else if (IN_CLASSC(n))
+	} else if (IN_CLASSC(n)) {
 		m = IN_CLASSC_NET;
-	else if (IN_CLASSD(n))
+	} else if (IN_CLASSD(n)) {
 		m = IN_CLASSD_NET;
-	else
+	} else {
 		return (0);
+}
 	m = htonl(m);
 
 	np->net = n;
@@ -711,13 +730,17 @@ isbogon(register u_int32_t sia)
 	register int i;
 	register struct nets *np;
 
-	if (nobogons)
+	if (nobogons) {
 		return (0);
-	if ((sia & netmask) == net)
+}
+	if ((sia & netmask) == net) {
 		return (0);
-	for (i = 0, np = nets; i < nets_ind; ++i, ++np)
-		if ((sia & np->netmask) == np->net)
+}
+	for (i = 0, np = nets; i < nets_ind; ++i, ++np) {
+		if ((sia & np->netmask) == np->net) {
 			return (0);
+}
+}
 	return (1);
 }
 
@@ -734,9 +757,9 @@ RETSIGTYPE
 checkpoint(int signo)
 {
 
-	if (!can_checkpoint)
+	if (!can_checkpoint) {
 		(void)alarm(1);
-	else {
+	} else {
 		(void)alarm(0);
 		(void)dump();
 		(void)alarm(CHECKPOINT);

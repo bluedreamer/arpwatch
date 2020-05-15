@@ -38,8 +38,9 @@ intoa(register u_int32_t addr)
 		if (byte > 0) {
 			*--cp = byte % 10 + '0';
 			byte /= 10;
-			if (byte > 0)
+			if (byte > 0) {
 				*--cp = byte + '0';
+}
 		}
 		*--cp = '.';
 		addr >>= 8;

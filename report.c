@@ -101,8 +101,9 @@ fmtdelta(register time_t t)
 		t /= (24 * 60 * 60);
 		cp = "day";
 	}
-	if (minus)
+	if (minus) {
 		t = -t;
+}
 	(void)sprintf(buf, "%u %s%s", (u_int32_t)t, cp, PLURAL(t));
 	return(buf);
 }
@@ -144,8 +145,9 @@ fmtdate(time_t t)
 	static int init = 0;
 	static char zone[32], buf[132];
 
-	if (t == 0)
+	if (t == 0) {
 		return("<no date>");
+}
 
 	if (!init) {
 		mw = gmt2local() / 60;
@@ -196,8 +198,9 @@ gmt2local(void)
 	 * avoid problems when the julian day wraps.
 	 */
 	dir = loc->tm_year - gmt->tm_year;
-	if (dir == 0)
+	if (dir == 0) {
 		dir = loc->tm_yday - gmt->tm_yday;
+}
 	dt += dir * 24 * 60 * 60;
 
 	return (dt);
@@ -213,20 +216,24 @@ reaper(int signo)
 		pid = waitpid((pid_t)0, &status, WNOHANG);
 		if ((int)pid < 0) {
 			/* ptrace foo */
-			if (errno == EINTR)
+			if (errno == EINTR) {
 				continue;
+}
 			/* ECHILD means no one left */
-			if (errno != ECHILD)
+			if (errno != ECHILD) {
 				syslog(LOG_ERR, "reaper: %m");
+}
 			break;
 		}
 		/* Already got everyone who was done */
-		if (pid == 0)
+		if (pid == 0) {
 			break;
+}
 		--cdepth;
-		if (WEXITSTATUS(status))
+		if (WEXITSTATUS(status)) {
 			syslog(LOG_DEBUG, "reaper: pid %d, exit status %d",
 			    pid, WEXITSTATUS(status));
+}
 	}
 	return RETSIGVAL;
 }
@@ -248,8 +255,9 @@ report(register char *title, register u_int32_t a, register u_char *e1,
 	static int init = 0;
 
 	/* No report until we're initialized */
-	if (initializing)
+	if (initializing) {
 		return;
+}
 
 	if (debug) {
 		if (debug > 1) {
@@ -279,8 +287,9 @@ report(register char *title, register u_int32_t a, register u_char *e1,
 		pid = fork();
 		if (pid) {
 			/* Parent */
-			if (pid < 0)
+			if (pid < 0) {
 				syslog(LOG_ERR, "report: fork() 1: %m");
+}
 			return;
 		}
 
@@ -296,16 +305,17 @@ report(register char *title, register u_int32_t a, register u_char *e1,
 			exit(1);
 		}
 		/* Cheap delete-on-close */
-		if (unlink(tempfile) < 0)
+		if (unlink(tempfile) < 0) {
 			syslog(LOG_ERR, "unlink(%s): %m", tempfile);
+}
 	}
 
 	(void)fprintf(f, "From: %s\n", watchee);
 	(void)fprintf(f, "To: %s\n", watcher);
 	hn = gethname(a);
-	if (!isdigit(*hn))
+	if (!isdigit(*hn)) {
 		(void)fprintf(f, "Subject: %s (%s)\n", title, hn);
-	else {
+	} else {
 		(void)fprintf(f, "Subject: %s\n", title);
 		hn = unknown;
 	}
@@ -313,8 +323,9 @@ report(register char *title, register u_int32_t a, register u_char *e1,
 	(void)fprintf(f, fmt, "hostname", hn);
 	(void)fprintf(f, fmt, "ip address", intoa(a));
 	(void)fprintf(f, fmt, "ethernet address", e2str(e1));
-	if ((cp = ec_find(e1)) == NULL)
+	if ((cp = ec_find(e1)) == NULL) {
 		cp = unknown;
+}
 	(void)fprintf(f, fmt, "ethernet vendor", cp);
 	if (hn != unknown && gethinfo(hn, cpu, sizeof(cpu), os, sizeof(os))) {
 		(void)sprintf(buf, "%s %s", cpu, os);
@@ -322,16 +333,20 @@ report(register char *title, register u_int32_t a, register u_char *e1,
 	}
 	if (e2) {
 		(void)fprintf(f, fmt, "old ethernet address", e2str(e2));
-		if ((cp = ec_find(e2)) == NULL)
+		if ((cp = ec_find(e2)) == NULL) {
 			cp = unknown;
+}
 		(void)fprintf(f, fmt, "old ethernet vendor", cp);
 	}
-	if (t1p)
+	if (t1p) {
 		(void)fprintf(f, fmt, "timestamp", fmtdate(*t1p));
-	if (t2p)
+}
+	if (t2p) {
 		(void)fprintf(f, fmt, "previous timestamp", fmtdate(*t2p));
-	if (t1p && t2p && *t1p && *t2p)
+}
+	if (t1p && t2p && *t1p && *t2p) {
 		(void)fprintf(f, fmt, "delta", fmtdelta(*t1p - *t2p));
+}
 
 	if (debug) {
 		fflush(f);

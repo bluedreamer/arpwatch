@@ -79,8 +79,9 @@ bcopy(src0, dst0, length)
 	register const char *src = src0;
 	register size_t t;
 
-	if (length == 0 || dst == src)		/* nothing to do */
+	if (length == 0 || dst == src) {		/* nothing to do */
 		goto done;
+}
 
 	/*
 	 * Macros: loop-t-times; and loop-t-times, t>0
@@ -98,10 +99,11 @@ bcopy(src0, dst0, length)
 			 * Try to align operands.  This cannot be done
 			 * unless the low bits match.
 			 */
-			if ((t ^ (int)dst) & wmask || length < wsize)
+			if ((t ^ (int)dst) & wmask || length < wsize) {
 				t = length;
-			else
+			} else {
 				t = wsize - (t & wmask);
+}
 			length -= t;
 			TLOOP1(*dst++ = *src++);
 		}
@@ -122,10 +124,11 @@ bcopy(src0, dst0, length)
 		dst += length;
 		t = (int)src;
 		if ((t | (int)dst) & wmask) {
-			if ((t ^ (int)dst) & wmask || length <= wsize)
+			if ((t ^ (int)dst) & wmask || length <= wsize) {
 				t = length;
-			else
+			} else {
 				t &= wmask;
+}
 			length -= t;
 			TLOOP1(*--dst = *--src);
 		}

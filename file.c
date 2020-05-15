@@ -77,10 +77,12 @@ file_loop(register FILE *f, file_process fn, register const char *name)
 		++n;
 		cp = line;
 		cp2 = cp + strlen(cp) - 1;
-		if (cp2 >= cp && *cp2 == '\n')
+		if (cp2 >= cp && *cp2 == '\n') {
 			*cp2++ = '\0';
-		if (*cp == '#')
+}
+		if (*cp == '#') {
 			continue;
+}
 		if ((cp2 = strchr(cp, '\t')) == NULL) {
 			syslog(LOG_ERR, "file_loop: %s:%d syntax error #1",
 			    name, n);
@@ -100,8 +102,9 @@ fprintf(stderr, "file_loop: %s:%d bad ether addr \"%s\"\n", name, n, cp);
 
 		/* ip address is next */
 		cp = cp2;
-		if ((cp2 = strchr(cp, '\t')) != NULL)
+		if ((cp2 = strchr(cp, '\t')) != NULL) {
 			*cp2++ = '\0';
+}
 		if (!isdigit((int)*cp) || (int32_t)(a = inet_addr(cp)) == -1) {
 			if ((hp = gethostbyname(cp)) == NULL) {
 				syslog(LOG_ERR,
@@ -124,14 +127,16 @@ fprintf(stderr, "file_loop: %s:%d bad hostname \"%s\"\n", name, n, cp);
 				++h;
 				++cp2;
 				while (*cp2 != '\n' && *cp2 != '\t' &&
-				    *cp2 != '\0')
+				    *cp2 != '\0') {
 					++cp2;
+}
 				*cp2 = '\0';
 			}
 		}
 
-		if (!(*fn)(a, e, t, h))
+		if (!(*fn)(a, e, t, h)) {
 			return(0);
+}
 	}
 
 	return(1);
