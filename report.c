@@ -72,9 +72,9 @@ struct rtentry;
 
 static int cdepth;	/* number of outstanding children */
 
-static char *fmtdate(time_t);
-static char *fmtdelta(time_t);
-RETSIGTYPE reaper(int);
+static char *fmtdate(time_t /*t*/);
+static char *fmtdelta(time_t /*t*/);
+RETSIGTYPE reaper(int /*signo*/);
 static int32_t gmt2local(void);
 
 static char *
@@ -143,7 +143,8 @@ fmtdate(time_t t)
 	register int32_t mw;
 	register char ch;
 	static int init = 0;
-	static char zone[32], buf[132];
+	static char zone[32];
+	static char buf[132];
 
 	if (t == 0) {
 		return("<no date>");
@@ -180,8 +181,10 @@ fmtdate(time_t t)
 static int32_t
 gmt2local(void)
 {
-	register int dt, dir;
-	register struct tm *gmt, *loc;
+	register int dt;
+	register int dir;
+	register struct tm *gmt;
+	register struct tm *loc;
 	time_t t;
 	struct tm sgmt;
 
@@ -240,12 +243,16 @@ reaper(int signo)
 
 void
 report(register char *title, register u_int32_t a, register u_char *e1,
-    register u_char *e2, register time_t *t1p, register time_t *t2p)
+    register u_char *e2, const register time_t *t1p, const register time_t *t2p)
 {
-	register char *cp, *hn;
-	register int fd, pid;
+	register char *cp;
+	register char *hn;
+	register int fd;
+	register int pid;
 	register FILE *f;
-	char tempfile[64], cpu[64], os[64];
+	char tempfile[64];
+	char cpu[64];
+	char os[64];
 	char *fmt = "%20s: %s\n";
 	char *watcher = WATCHER;
 	char *watchee = WATCHEE;

@@ -159,7 +159,8 @@ gethname(u_int32_t a)
 char *
 getsname(register u_int32_t a)
 {
-	register char *s, *cp;
+	register char *s;
+	register char *cp;
 
 	s = gethname(a);
 	if (!isdigit((int)*s)) {

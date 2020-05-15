@@ -109,7 +109,8 @@ int
 dump(void)
 {
 	register int fd;
-	char oldarpfile[256], newarpfile[256];
+	char oldarpfile[256];
+	char newarpfile[256];
 
 	(void)sprintf(oldarpfile, "%s-", arpfile);
 	(void)sprintf(newarpfile, "%s.new", arpfile);

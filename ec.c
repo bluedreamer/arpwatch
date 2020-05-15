@@ -70,7 +70,7 @@ static u_int ec_last = 0;
 static u_int ec_len = 0;
 
 /* Forwards */
-static int ec_a2o(char *, u_int32_t *);
+static int ec_a2o(char * /*cp*/, u_int32_t * /*op*/);
 
 /* Convert an 3 octets from an ethernet address to a u_int32_t */
 static int
@@ -135,7 +135,9 @@ int
 ec_loop(register FILE *f, ec_process fn, register const char *nm)
 {
 	register int n;
-	register char *cp, *cp2, *text;
+	register char *cp;
+	register char *cp2;
+	register char *text;
 	register int sawblank;
 	u_int32_t o;
 	char line[1024];

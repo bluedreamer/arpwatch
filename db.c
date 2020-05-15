@@ -78,11 +78,11 @@ struct ainfo {
 /* Address hash table */
 static struct ainfo ainfo_table[HASHSIZE];
 
-static void alist_alloc(struct ainfo *);
-int cmpeinfo(const void *, const void *);
-static struct einfo *elist_alloc(u_int32_t, u_char *, time_t, char *);
-static struct ainfo *ainfo_find(u_int32_t);
-static void check_hname(struct ainfo *);
+static void alist_alloc(struct ainfo * /*ap*/);
+int cmpeinfo(const void * /*p1*/, const void * /*p2*/);
+static struct einfo *elist_alloc(u_int32_t /*a*/, u_char * /*e*/, time_t /*t*/, char * /*h*/);
+static struct ainfo *ainfo_find(u_int32_t /*a*/);
+static void check_hname(struct ainfo * /*ap*/);
 struct ainfo *newainfo(void);
 
 int
@@ -220,7 +220,9 @@ ainfo_find(register u_int32_t a)
 int
 ent_loop(ent_process fn)
 {
-	register int i, j, n;
+	register int i;
+	register int j;
+	register int n;
 	register struct ainfo *ap;
 	register struct einfo *ep;
 
@@ -319,7 +321,8 @@ check_hname(register struct ainfo *ap)
 int
 cmpeinfo(register const void *p1, register const void *p2)
 {
-	register time_t t1, t2;
+	register time_t t1;
+	register time_t t2;
 
 	t1 = (*(struct einfo **)p1)->t;
 	t2 = (*(struct einfo **)p2)->t;
@@ -376,7 +379,8 @@ newainfo(void)
 void
 debugdump(void)
 {
-	register int i, j;
+	register int i;
+	register int j;
 	register time_t t;
 	register struct ainfo *ap;
 	register struct einfo *ep;

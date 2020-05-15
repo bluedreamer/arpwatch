@@ -123,34 +123,40 @@ static struct nets *nets;
 static int nets_ind;
 static int nets_size;
 
-extern int optind;
-extern int opterr;
-extern char *optarg;
+
+
+
 
 /* Forwards */
-int	addnet(const char *);
-RETSIGTYPE checkpoint(int);
-RETSIGTYPE die(int);
-int	isbogon(u_int32_t);
-int	main(int, char **);
-void	process_ether(u_char *, const struct pcap_pkthdr *, const u_char *);
-void	process_fddi(u_char *, const struct pcap_pkthdr *, const u_char *);
+int	addnet(const char * /*str*/);
+RETSIGTYPE checkpoint(int /*signo*/);
+RETSIGTYPE die(int /*signo*/);
+int	isbogon(u_int32_t /*sia*/);
+int	main(int /*argc*/, char ** /*argv*/);
+void	process_ether(u_char * /*u*/, const struct pcap_pkthdr * /*h*/, const u_char * /*p*/);
+void	process_fddi(u_char * /*u*/, const struct pcap_pkthdr * /*h*/, const u_char * /*p*/);
 int	readsnmp(char *);
 int	snmp_add(u_int32_t, u_char *, time_t, char *);
-int	sanity_ether(struct ether_header *, struct ether_arp *, int);
-int	sanity_fddi(struct fddi_header *, struct ether_arp *, int);
+int	sanity_ether(struct ether_header * /*eh*/, struct ether_arp * /*ea*/, int /*len*/);
+int	sanity_fddi(struct fddi_header * /*fh*/, struct ether_arp * /*ea*/, int /*len*/);
 __dead	void usage(void) __attribute__((volatile));
 
 int
 main(int argc, char **argv)
 {
 	register char *cp;
-	register int op, pid, snaplen, timeout, linktype, status;
+	register int op;
+	register int pid;
+	register int snaplen;
+	register int timeout;
+	register int linktype;
+	register int status;
 #ifdef TIOCNOTTY
 	register int fd;
 #endif
 	register pcap_t *pd;
-	register char *interface, *rfilename;
+	register char *interface;
+	register char *rfilename;
 	struct bpf_program code;
 	char errbuf[PCAP_ERRBUF_SIZE];
 
@@ -367,7 +373,8 @@ process_ether(register u_char *u, register const struct pcap_pkthdr *h,
 {
 	register struct ether_header *eh;
 	register struct ether_arp *ea;
-	register u_char *sea, *sha;
+	register u_char *sea;
+	register u_char *sha;
 	register time_t t;
 	u_int32_t sia;
 
@@ -474,7 +481,7 @@ sanity_ether(register struct ether_header *eh, register struct ether_arp *ea,
 		if (ea->arp_op == REVARP_REQUEST) {
 			/* no useful information here */
 			return(0);
-		} else if (ea->arp_op != REVARP_REPLY) {
+		} if (ea->arp_op != REVARP_REPLY) {
 			if (debug) {
 				syslog(LOG_ERR, "%s sent wrong revarp op %d\n",
 				    e2str(shost), ea->arp_op);
@@ -515,7 +522,8 @@ process_fddi(register u_char *u, register const struct pcap_pkthdr *h,
 {
 	register struct fddi_header *fh;
 	register struct ether_arp *ea;
-	register u_char *sea, *sha;
+	register u_char *sea;
+	register u_char *sha;
 	register time_t t;
 	u_int32_t sia;
 
@@ -574,7 +582,10 @@ sanity_fddi(register struct fddi_header *fh, register struct ether_arp *ea,
     register int len)
 {
 	u_char *shost = fh->src;
-	u_short type, hrd, pro, op;
+	u_short type;
+	u_short hrd;
+	u_short pro;
+	u_short op;
 
 	/* This rather clunky copy stuff is needed because the fddi header
 	 * has an odd (i.e. not even) length, causing memory alignment
@@ -632,7 +643,7 @@ sanity_fddi(register struct fddi_header *fh, register struct ether_arp *ea,
 		if (op == REVARP_REQUEST) {
 			/* no useful information here */
 			return(0);
-		} else if (op != REVARP_REPLY) {
+		} if (op != REVARP_REPLY) {
 			if (debug) {
 				syslog(LOG_ERR, "%s sent wrong revarp op %d\n",
 				    e2str(shost), op);
@@ -652,7 +663,8 @@ addnet(register const char *str)
 {
 	register char *cp;
 	register int width;
-	register u_int32_t n, m;
+	register u_int32_t n;
+	register u_int32_t m;
 	register struct nets *np;
 	char *cp2;
 	char tstr[64];

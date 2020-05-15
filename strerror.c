@@ -53,7 +53,8 @@ strerror(num)
 #define	UPREFIX	"Unknown error: "
 	static char ebuf[40] = UPREFIX;		/* 64-bit number + slop */
 	register unsigned int errnum;
-	register char *p, *t;
+	register char *p;
+	register char *t;
 	char tmp[40];
 
 	errnum = num;				/* convert to unsigned */

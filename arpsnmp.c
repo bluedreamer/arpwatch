@@ -61,22 +61,23 @@ static const char rcsid[] =
 #include "util.h"
 
 /* Forwards */
-int	main(int, char **);
-int	readsnmp(char *);
-int	snmp_add(u_int32_t, u_char *, time_t, char *);
+int	main(int /*argc*/, char ** /*argv*/);
+int	readsnmp(char * /*file*/);
+int	snmp_add(u_int32_t /*a*/, u_char * /*e*/, time_t /*t*/, char * /*h*/);
 __dead	void usage(void) __attribute__((volatile));
 
 char *prog;
 
-extern int optind;
-extern int opterr;
-extern char *optarg;
+
+
+
 
 int
 main(int argc, char **argv)
 {
 	register char *cp;
-	register int op, i;
+	register int op;
+	register int i;
 	char errbuf[256];
 
 	if ((cp = strrchr(argv[0], '/')) != NULL) {

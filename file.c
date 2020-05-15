@@ -65,7 +65,9 @@ int
 file_loop(register FILE *f, file_process fn, register const char *name)
 {
 	register int n;
-	register char *cp, *cp2, *h;
+	register char *cp;
+	register char *cp2;
+	register char *h;
 	u_int32_t a;
 	register time_t t;
 	register struct hostent *hp;
